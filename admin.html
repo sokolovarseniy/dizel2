@@ -1,0 +1,532 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Администратор — ХК «Дизель»</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#061225">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* ── Дополнительные стили для страницы администратора ── */
+    .admin-login {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(145deg, #07162d, #061225);
+      padding: 20px;
+    }
+    .login-card {
+      width: min(420px, 100%);
+      padding: 40px 36px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--card);
+      box-shadow: 0 24px 64px rgba(0,0,0,.4);
+    }
+    .login-card h1 { font-size: 28px; margin: 0 0 8px; }
+    .login-card p  { color: var(--muted); margin: 0 0 28px; }
+    .login-card label { display: grid; gap: 8px; margin-bottom: 16px; color: var(--muted); font-weight: 850; }
+    .login-card input { width: 100%; min-height: 48px; padding: 0 14px; border: 1px solid var(--line); border-radius: 14px; background: rgba(255,255,255,.06); color: var(--text); outline: none; font-size: 16px; }
+    .login-card input:focus { border-color: var(--yellow); box-shadow: 0 0 0 4px rgba(255,210,51,.1); }
+    .login-error { color: #ff5a5a; font-size: 14px; min-height: 20px; margin-top: 8px; }
+
+    .admin-wrap { display: none; }
+    .admin-wrap.visible { display: block; }
+
+    .admin-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 28px;
+      background: #041021;
+      border-bottom: 1px solid var(--line);
+    }
+    .admin-header .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+    .admin-header .brand img { width: 38px; height: 38px; }
+    .admin-header .brand strong { font-family: var(--display); font-size: 18px; color: var(--text); }
+    .admin-badge { padding: 4px 12px; border-radius: 999px; background: rgba(255,210,51,.15); color: var(--yellow); font-size: 12px; font-weight: 900; letter-spacing: .08em; }
+    .admin-logout { padding: 0 16px; min-height: 38px; border: 1px solid var(--line); border-radius: 999px; background: transparent; color: var(--muted); cursor: pointer; font-size: 14px; transition: .2s; }
+    .admin-logout:hover { border-color: var(--yellow); color: var(--yellow); }
+
+    .admin-body { padding: 36px 28px 60px; max-width: 1300px; margin: 0 auto; }
+
+    /* Статистика */
+    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 36px; }
+    .stat-card { padding: 22px 24px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--card); }
+    .stat-card .stat-label { font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin: 0 0 10px; }
+    .stat-card .stat-value { font-family: var(--display); font-size: 38px; color: var(--yellow); margin: 0 0 4px; line-height: 1; }
+    .stat-card .stat-sub { font-size: 13px; color: var(--muted); margin: 0; }
+
+    /* Фильтры и поиск */
+    .db-toolbar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+    .db-search { flex: 1; min-width: 220px; max-width: 340px; min-height: 44px; padding: 0 16px 0 40px; border: 1px solid var(--line); border-radius: 999px; background: rgba(255,255,255,.06); color: var(--text); outline: none; font-size: 14px; }
+    .db-search:focus { border-color: var(--yellow); }
+    .search-wrap { position: relative; flex: 1; min-width: 220px; max-width: 340px; }
+    .search-wrap::before { content: '🔍'; position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 14px; pointer-events: none; }
+    .db-select { min-height: 44px; padding: 0 16px; border: 1px solid var(--line); border-radius: 999px; background: rgba(255,255,255,.06); color: var(--text); outline: none; font-size: 14px; cursor: pointer; }
+    .db-select:focus { border-color: var(--yellow); }
+    .db-actions { margin-left: auto; display: flex; gap: 10px; }
+    .btn-sm { padding: 0 16px; min-height: 38px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--muted); font-size: 13px; font-weight: 900; cursor: pointer; transition: .2s; }
+    .btn-sm:hover { border-color: var(--yellow); color: var(--yellow); }
+    .btn-sm.danger:hover { border-color: #ff5a5a; color: #ff5a5a; }
+
+    /* Таблица */
+    .db-table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--card); }
+    .db-table { width: 100%; border-collapse: collapse; min-width: 860px; }
+    .db-table th { padding: 14px 16px; text-align: left; border-bottom: 1px solid var(--line); color: var(--yellow); font-size: 11px; text-transform: uppercase; letter-spacing: .1em; white-space: nowrap; }
+    .db-table td { padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,.05); font-size: 14px; vertical-align: middle; }
+    .db-table tr:last-child td { border-bottom: 0; }
+    .db-table tr:hover td { background: rgba(255,255,255,.03); }
+    .db-empty { padding: 48px 24px; text-align: center; color: var(--muted); }
+    .db-empty p { margin: 0; }
+
+    /* Бейджи типов */
+    .type-badge { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 900; letter-spacing: .04em; }
+    .type-badge.tickets { background: rgba(255,210,51,.15); color: var(--yellow); }
+    .type-badge.shop    { background: rgba(80,200,120,.15); color: #50c878; }
+
+    /* ID заказа */
+    .order-id { font-family: monospace; font-size: 13px; color: var(--yellow); font-weight: 900; }
+
+    /* Пагинация */
+    .pagination { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
+    .pagination span { font-size: 14px; color: var(--muted); }
+    .page-btns { display: flex; gap: 8px; }
+    .page-btns button { width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--line); background: transparent; color: var(--text); cursor: pointer; transition: .2s; font-size: 14px; }
+    .page-btns button.active { background: var(--yellow); border-color: var(--yellow); color: #061225; font-weight: 900; }
+    .page-btns button:hover:not(.active) { border-color: var(--yellow); color: var(--yellow); }
+    .page-btns button:disabled { opacity: .35; pointer-events: none; }
+
+    /* Детали заказа */
+    .order-detail p { margin: 0 0 10px; font-size: 14px; }
+    .order-detail strong { color: var(--yellow); }
+    .detail-row { display: flex; gap: 8px; margin-bottom: 10px; font-size: 14px; }
+    .detail-row b { color: var(--muted); min-width: 110px; font-weight: 600; }
+
+    /* Уведомление об экспорте */
+    .export-note { margin-top: 24px; padding: 16px 20px; border: 1px solid rgba(255,210,51,.2); border-radius: 14px; background: rgba(255,210,51,.06); font-size: 14px; color: var(--muted); line-height: 1.6; }
+    .export-note strong { color: var(--yellow); }
+
+    /* Демо-данные */
+    .demo-banner { display: flex; align-items: center; gap: 12px; padding: 12px 20px; border-radius: 14px; background: rgba(255,210,51,.08); border: 1px solid rgba(255,210,51,.2); margin-bottom: 28px; font-size: 14px; color: var(--muted); }
+    .demo-banner strong { color: var(--yellow); }
+
+    @media (max-width: 900px) {
+      .stats-row { grid-template-columns: 1fr 1fr; }
+      .admin-header { padding: 12px 16px; }
+      .admin-body { padding: 24px 16px 60px; }
+    }
+    @media (max-width: 540px) {
+      .stats-row { grid-template-columns: 1fr 1fr; }
+      .stat-card .stat-value { font-size: 28px; }
+      .db-actions { width: 100%; justify-content: flex-end; }
+    }
+  </style>
+</head>
+<body style="background:#061225; color: #f0f4ff;">
+
+  <!-- ══ ЭКРАН ВХОДА ══ -->
+  <div class="admin-login" id="loginScreen">
+    <div class="login-card">
+      <p class="eyebrow" style="margin-bottom:18px">ХК «Дизель»</p>
+      <h1>Панель администратора</h1>
+      <p>Введите пароль для доступа к базе данных заказов.</p>
+      <label>
+        Пароль
+        <input type="password" id="passwordInput" placeholder="Введите пароль" autocomplete="current-password">
+      </label>
+      <button class="btn btn-yellow wide" type="button" id="loginBtn">Войти</button>
+      <div class="login-error" id="loginError"></div>
+
+    </div>
+  </div>
+
+  <!-- ══ ПАНЕЛЬ АДМИНИСТРАТОРА ══ -->
+  <div class="admin-wrap" id="adminPanel">
+
+    <header class="admin-header">
+      <a class="brand" href="index.html">
+        <img src="logo.svg" alt="">
+        <strong>ХК «Дизель»</strong>
+      </a>
+      <span class="admin-badge">⚙ Администратор</span>
+      <button class="admin-logout" id="logoutBtn">Выйти</button>
+    </header>
+
+    <div class="admin-body">
+      <p class="eyebrow">База данных</p>
+      <h1 style="font-family:var(--display); font-size: clamp(28px,4vw,52px); margin:0 0 8px">Все заказы</h1>
+      <p style="color:var(--muted); margin:0 0 32px">Покупки билетов и атрибутики. Данные обновляются в реальном времени из localStorage браузеров покупателей.</p>
+
+      <div class="demo-banner" id="demoBanner">
+        <span>⚡</span>
+        <span><strong>Демо-режим:</strong> показаны тестовые заказы + ваши покупки из текущего браузера. Для общей базы — подключите Firebase (инструкция ниже).</span>
+      </div>
+
+      <!-- Статистика -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <p class="stat-label">Всего заказов</p>
+          <p class="stat-value" id="statTotal">0</p>
+          <p class="stat-sub">с начала сезона</p>
+        </div>
+        <div class="stat-card">
+          <p class="stat-label">Выручка</p>
+          <p class="stat-value" id="statRevenue">0 ₽</p>
+          <p class="stat-sub">сумма всех заказов</p>
+        </div>
+        <div class="stat-card">
+          <p class="stat-label">Билеты</p>
+          <p class="stat-value" id="statTickets">0</p>
+          <p class="stat-sub">оформленных заказов</p>
+        </div>
+        <div class="stat-card">
+          <p class="stat-label">Магазин</p>
+          <p class="stat-value" id="statShop">0</p>
+          <p class="stat-sub">заказов атрибутики</p>
+        </div>
+      </div>
+
+      <!-- Фильтры -->
+      <div class="db-toolbar">
+        <div class="search-wrap">
+          <input class="db-search" type="search" id="dbSearch" placeholder="Поиск по имени, ID, телефону…">
+        </div>
+        <select class="db-select" id="dbTypeFilter">
+          <option value="all">Все типы</option>
+          <option value="Билеты">Только билеты</option>
+          <option value="Магазин">Только магазин</option>
+        </select>
+        <select class="db-select" id="dbSortFilter">
+          <option value="newest">Новые сначала</option>
+          <option value="oldest">Старые сначала</option>
+          <option value="amount_desc">По сумме ↓</option>
+          <option value="amount_asc">По сумме ↑</option>
+        </select>
+        <div class="db-actions">
+          <button class="btn-sm" id="exportCsvBtn">⬇ Экспорт CSV</button>
+          <button class="btn-sm" id="refreshBtn">↺ Обновить</button>
+          <button class="btn-sm danger" id="clearDemoBtn">🗑 Очистить демо</button>
+        </div>
+      </div>
+
+      <!-- Таблица -->
+      <div class="db-table-wrap">
+        <table class="db-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>ID заказа</th>
+              <th>Тип</th>
+              <th>Покупатель</th>
+              <th>Телефон</th>
+              <th>Товар / Матч</th>
+              <th>Сектор / Кол-во</th>
+              <th>Сумма</th>
+              <th>Дата оформления</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="ordersTableBody">
+            <tr><td colspan="10" class="db-empty"><p>Загрузка…</p></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Пагинация -->
+      <div class="pagination" id="paginationBlock">
+        <span id="paginationInfo"></span>
+        <div class="page-btns" id="pageButtons"></div>
+      </div>
+
+
+    </div>
+
+  </div><!-- /admin-wrap -->
+
+  <!-- Модалка деталей заказа -->
+  <dialog class="modal" id="orderDetailModal">
+    <div class="modal-card" style="max-width:520px">
+      <button class="modal-close" type="button" id="closeDetailModal" aria-label="Закрыть">×</button>
+      <p class="eyebrow">Детали заказа</p>
+      <div class="order-detail" id="orderDetailBody"></div>
+    </div>
+  </dialog>
+
+  <script>
+  // ════════════════════════════════════════
+  //  КОНФИГУРАЦИЯ АДМИНИСТРАТОРА
+  // ════════════════════════════════════════
+  const ADMIN_PASSWORD = 'dizel2026'; // ← Смени пароль на свой!
+  const PAGE_SIZE = 15;
+
+  // ════════════════════════════════════════
+  //  ДЕМО-ДАННЫЕ (видны сразу, пока нет реальных покупок)
+  // ════════════════════════════════════════
+  const DEMO_ORDERS = [
+    { id:'DZ-847291', type:'Билеты', title:'Дизель — Спутник', date:'14 сентября 2026', time:'19:00', sector:'A', qty:2, total:1100, name:'Алексей Петров',    phone:'+7 (911) 234-56-78', email:'petrov@mail.ru',  created:'04.06.2026, 10:14' },
+    { id:'DZ-512034', type:'Билеты', title:'Дизель — Север',   date:'5 октября 2026',  time:'17:00', sector:'B', qty:1, total:450,  name:'Марина Соколова',   phone:'+7 (921) 876-54-32', email:'marina@yandex.ru', created:'04.06.2026, 09:47' },
+    { id:'SHOP-930182', type:'Магазин', title:'Клубная атрибутика', items:[{product:'Шарф «Дизель»',qty:1,price:890},{product:'Значок клуба',qty:2,price:320}], total:1530, name:'Дмитрий Козлов', phone:'+7 (900) 111-22-33', email:'', created:'03.06.2026, 18:31' },
+    { id:'DZ-761408', type:'Билеты', title:'Дизель — Вымпел',  date:'19 октября 2026', time:'18:00', sector:'C', qty:4, total:1120, name:'Ольга Новикова',    phone:'+7 (952) 445-66-77', email:'olga@gmail.com',   created:'03.06.2026, 15:05' },
+    { id:'SHOP-204751', type:'Магазин', title:'Клубная атрибутика', items:[{product:'Футболка с номером',qty:1,price:1890}], total:1890, name:'Игорь Фёдоров',   phone:'+7 (981) 321-09-87', email:'igor@mail.ru',    created:'02.06.2026, 21:18' },
+    { id:'DZ-389024', type:'Билеты', title:'Дизель — Спутник', date:'14 сентября 2026', time:'19:00', sector:'B', qty:2, total:800,  name:'Сергей Лебедев',    phone:'+7 (962) 657-89-10', email:'sergey@yandex.ru', created:'02.06.2026, 14:30' },
+    { id:'DZ-105673', type:'Билеты', title:'Дизель — Север',   date:'5 октября 2026',  time:'17:00', sector:'A', qty:3, total:1800, name:'Татьяна Морозова',  phone:'+7 (905) 543-21-00', email:'tatyana@mail.ru', created:'01.06.2026, 11:55' },
+    { id:'SHOP-871345', type:'Магазин', title:'Клубная атрибутика', items:[{product:'Кепка «Дизель»',qty:2,price:750}], total:1500, name:'Андрей Волков',     phone:'+7 (910) 789-01-23', email:'', created:'01.06.2026, 09:12' },
+  ];
+
+  // ════════════════════════════════════════
+  //  УТИЛИТЫ
+  // ════════════════════════════════════════
+  const money = n => new Intl.NumberFormat('ru-RU',{style:'currency',currency:'RUB',maximumFractionDigits:0}).format(n);
+
+  function getLocalOrders() {
+    try { return JSON.parse(localStorage.getItem('dizelOrders')) || []; } catch { return []; }
+  }
+
+  function isDemoOrder(id) {
+    return DEMO_ORDERS.some(o => o.id === id);
+  }
+
+  // Объединяем демо + реальные из localStorage, убираем дубли
+  function getAllOrders() {
+    const local = getLocalOrders();
+    const localIds = new Set(local.map(o => o.id));
+    const combined = [...local, ...DEMO_ORDERS.filter(o => !localIds.has(o.id))];
+    return combined;
+  }
+
+  // ════════════════════════════════════════
+  //  АВТОРИЗАЦИЯ
+  // ════════════════════════════════════════
+  const loginScreen = document.getElementById('loginScreen');
+  const adminPanel  = document.getElementById('adminPanel');
+  const passwordInput = document.getElementById('passwordInput');
+  const loginBtn    = document.getElementById('loginBtn');
+  const loginError  = document.getElementById('loginError');
+
+  function tryLogin() {
+    if (passwordInput.value === ADMIN_PASSWORD) {
+      sessionStorage.setItem('dizelAdmin', '1');
+      loginScreen.style.display = 'none';
+      adminPanel.classList.add('visible');
+      initAdmin();
+    } else {
+      loginError.textContent = 'Неверный пароль. Попробуйте снова.';
+      passwordInput.value = '';
+      passwordInput.focus();
+    }
+  }
+
+  loginBtn.addEventListener('click', tryLogin);
+  passwordInput.addEventListener('keydown', e => { if (e.key === 'Enter') tryLogin(); });
+
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+    sessionStorage.removeItem('dizelAdmin');
+    location.reload();
+  });
+
+  // Автовход если уже авторизован в этой вкладке
+  if (sessionStorage.getItem('dizelAdmin') === '1') {
+    loginScreen.style.display = 'none';
+    adminPanel.classList.add('visible');
+    initAdmin();
+  }
+
+  // ════════════════════════════════════════
+  //  ЛОГИКА ТАБЛИЦЫ
+  // ════════════════════════════════════════
+  let currentPage = 1;
+  let filteredOrders = [];
+
+  function initAdmin() {
+    renderTable();
+    document.getElementById('dbSearch').addEventListener('input', () => { currentPage = 1; renderTable(); });
+    document.getElementById('dbTypeFilter').addEventListener('change', () => { currentPage = 1; renderTable(); });
+    document.getElementById('dbSortFilter').addEventListener('change', () => { currentPage = 1; renderTable(); });
+    document.getElementById('exportCsvBtn').addEventListener('click', exportCsv);
+    document.getElementById('refreshBtn').addEventListener('click', renderTable);
+    document.getElementById('clearDemoBtn').addEventListener('click', clearDemo);
+    document.getElementById('closeDetailModal').addEventListener('click', () => {
+      document.getElementById('orderDetailModal').close();
+    });
+  }
+
+  function renderTable() {
+    const query   = document.getElementById('dbSearch').value.toLowerCase().trim();
+    const typeF   = document.getElementById('dbTypeFilter').value;
+    const sortF   = document.getElementById('dbSortFilter').value;
+
+    let orders = getAllOrders();
+
+    // Фильтрация
+    if (typeF !== 'all') orders = orders.filter(o => o.type === typeF);
+    if (query) {
+      orders = orders.filter(o =>
+        (o.name||'').toLowerCase().includes(query) ||
+        (o.id||'').toLowerCase().includes(query) ||
+        (o.phone||'').includes(query) ||
+        (o.title||'').toLowerCase().includes(query)
+      );
+    }
+
+    // Сортировка
+    orders = [...orders].sort((a, b) => {
+      if (sortF === 'oldest')      return (a.id||'').localeCompare(b.id||'');
+      if (sortF === 'amount_desc') return (b.total||0) - (a.total||0);
+      if (sortF === 'amount_asc')  return (a.total||0) - (b.total||0);
+      return 0; // newest — уже в порядке добавления (unshift)
+    });
+
+    filteredOrders = orders;
+
+    // Статистика
+    const allOrders = getAllOrders();
+    document.getElementById('statTotal').textContent   = allOrders.length;
+    document.getElementById('statRevenue').textContent = money(allOrders.reduce((s,o) => s+(o.total||0), 0));
+    document.getElementById('statTickets').textContent = allOrders.filter(o => o.type === 'Билеты').length;
+    document.getElementById('statShop').textContent    = allOrders.filter(o => o.type === 'Магазин').length;
+
+    // Пагинация
+    const totalPages = Math.max(1, Math.ceil(orders.length / PAGE_SIZE));
+    if (currentPage > totalPages) currentPage = totalPages;
+    const start = (currentPage - 1) * PAGE_SIZE;
+    const pageOrders = orders.slice(start, start + PAGE_SIZE);
+
+    // Тело таблицы
+    const tbody = document.getElementById('ordersTableBody');
+    if (!pageOrders.length) {
+      tbody.innerHTML = '<tr><td colspan="10" class="db-empty"><p>Заказов не найдено</p></td></tr>';
+    } else {
+      tbody.innerHTML = pageOrders.map((o, idx) => {
+        const isDemo = isDemoOrder(o.id);
+        const sectorQty = o.sector ? `Сектор ${o.sector}, ${o.qty} шт.` : (o.items ? `${o.items.length} поз.` : '—');
+        return `<tr>
+          <td style="color:var(--muted); font-size:13px">${start + idx + 1}</td>
+          <td><span class="order-id">${o.id}</span>${isDemo ? '<span style="font-size:10px;color:rgba(255,255,255,.3);margin-left:6px">демо</span>' : ''}</td>
+          <td><span class="type-badge ${o.type === 'Билеты' ? 'tickets' : 'shop'}">${o.type}</span></td>
+          <td><b>${o.name || '—'}</b></td>
+          <td style="color:var(--muted); font-size:13px">${o.phone || '—'}</td>
+          <td>${o.title}</td>
+          <td style="color:var(--muted); font-size:13px">${sectorQty}</td>
+          <td><b style="color:var(--yellow)">${money(o.total||0)}</b></td>
+          <td style="color:var(--muted); font-size:13px; white-space:nowrap">${o.created}</td>
+          <td><button class="btn-sm" data-detail="${encodeURIComponent(JSON.stringify(o))}">Детали</button></td>
+        </tr>`;
+      }).join('');
+
+      // Кнопки деталей
+      tbody.querySelectorAll('[data-detail]').forEach(btn => {
+        btn.addEventListener('click', () => showDetail(JSON.parse(decodeURIComponent(btn.dataset.detail))));
+      });
+    }
+
+    // Пагинация
+    renderPagination(totalPages, orders.length, start);
+  }
+
+  function renderPagination(totalPages, total, start) {
+    const info = document.getElementById('paginationInfo');
+    const btns = document.getElementById('pageButtons');
+    const end  = Math.min(start + PAGE_SIZE, total);
+    info.textContent = total ? `Показано ${start+1}–${end} из ${total}` : '';
+
+    let html = `<button ${currentPage===1?'disabled':''} onclick="goPage(${currentPage-1})">←</button>`;
+    for (let i = 1; i <= totalPages; i++) {
+      if (totalPages <= 7 || Math.abs(i - currentPage) <= 2 || i === 1 || i === totalPages) {
+        html += `<button class="${i===currentPage?'active':''}" onclick="goPage(${i})">${i}</button>`;
+      } else if (Math.abs(i - currentPage) === 3) {
+        html += `<button disabled>…</button>`;
+      }
+    }
+    html += `<button ${currentPage===totalPages?'disabled':''} onclick="goPage(${currentPage+1})">→</button>`;
+    btns.innerHTML = html;
+  }
+
+  window.goPage = function(n) { currentPage = n; renderTable(); window.scrollTo({top:0,behavior:'smooth'}); };
+
+  // ════════════════════════════════════════
+  //  ДЕТАЛИ ЗАКАЗА
+  // ════════════════════════════════════════
+  function showDetail(o) {
+    const modal = document.getElementById('orderDetailModal');
+    const body  = document.getElementById('orderDetailBody');
+    const isDemo = isDemoOrder(o.id);
+
+    let itemsHtml = '';
+    if (o.items) {
+      itemsHtml = `<div class="detail-row"><b>Товары:</b><div>${o.items.map(i=>`${i.product} × ${i.qty} = ${money(i.qty*i.price)}`).join('<br>')}</div></div>`;
+    }
+
+    body.innerHTML = `
+      ${isDemo ? '<p style="font-size:13px; color:rgba(255,255,255,.35); margin-bottom:16px">⚠ Это демо-заказ (тестовые данные)</p>' : ''}
+      <div class="detail-row"><b>ID заказа:</b> <span class="order-id">${o.id}</span></div>
+      <div class="detail-row"><b>Тип:</b> <span class="type-badge ${o.type==='Билеты'?'tickets':'shop'}" style="margin:0">${o.type}</span></div>
+      <div class="detail-row"><b>Покупатель:</b> <strong>${o.name||'—'}</strong></div>
+      <div class="detail-row"><b>Телефон:</b> ${o.phone||'—'}</div>
+      <div class="detail-row"><b>Матч/товар:</b> ${o.title}</div>
+      ${o.date ? `<div class="detail-row"><b>Дата матча:</b> ${o.date} · ${o.time||''}</div>` : ''}
+      ${o.sector ? `<div class="detail-row"><b>Сектор:</b> ${o.sector}, ${o.qty} шт.</div>` : ''}
+      ${itemsHtml}
+      <div class="detail-row"><b>Сумма:</b> <strong style="color:var(--yellow)">${money(o.total||0)}</strong></div>
+      <div class="detail-row"><b>Оформлен:</b> ${o.created}</div>
+    `;
+    modal.showModal();
+  }
+
+  // ════════════════════════════════════════
+  //  ЭКСПОРТ CSV
+  // ════════════════════════════════════════
+  function exportCsv() {
+    const orders = filteredOrders.length ? filteredOrders : getAllOrders();
+    const header = ['ID','Тип','Покупатель','Телефон','Матч/Товар','Сектор','Кол-во','Сумма','Дата'];
+    const rows = orders.map(o => [
+      o.id, o.type, o.name||'', o.phone||'', o.title,
+      o.sector||'', o.qty||'', o.total||0, o.created
+    ]);
+
+    const csvContent = [header, ...rows]
+      .map(row => row.map(v => `"${String(v).replace(/"/g,'""')}"`).join(','))
+      .join('\n');
+
+    const bom = '\uFEFF'; // UTF-8 BOM для Excel
+    const blob = new Blob([bom + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = `dizel_orders_${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // ════════════════════════════════════════
+  //  ОЧИСТКА ДЕМО
+  // ════════════════════════════════════════
+  function clearDemo() {
+    if (!confirm('Удалить демо-заказы из отображения? Реальные покупки останутся.')) return;
+    // Скрываем баннер, показываем только реальные
+    document.getElementById('demoBanner').style.display = 'none';
+    // Очищаем localStorage от демо (если они туда попали)
+    const local = getLocalOrders().filter(o => !isDemoOrder(o.id));
+    localStorage.setItem('dizelOrders', JSON.stringify(local));
+    // Перезаписываем DEMO_ORDERS чтобы они не показывались
+    DEMO_ORDERS.length = 0;
+    renderTable();
+  }
+
+  // ════════════════════════════════════════
+  //  ЗАКРЫТИЕ МОДАЛКИ
+  // ════════════════════════════════════════
+  document.getElementById('orderDetailModal').addEventListener('click', function(e) {
+    if (e.target === this) this.close();
+  });
+  </script>
+</body>
+</html>

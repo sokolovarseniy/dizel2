@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Матчи и результаты — ХК «Дизель»</title>
+  <meta name="description" content="Расписание матчей, результаты и турнирная таблица ХК «Дизель».">
+  <meta name="theme-color" content="#061225">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-page="matches">
+  <header class="site-header" data-header>
+    <a class="brand" href="index.html" aria-label="ХК Дизель — главная страница"><img src="logo.svg" alt=""><span><strong>ХК «Дизель»</strong><small>Вологда</small></span></a>
+    <nav class="site-nav" aria-label="Основная навигация"><a href="index.html" data-page-link="home">Главная</a>
+<a href="matches.html" data-page-link="matches">Матчи</a>
+<a href="tickets.html" data-page-link="tickets">Билеты</a>
+<a href="team.html" data-page-link="team">Команда</a>
+<a href="news.html" data-page-link="news">Новости</a>
+<a href="media.html" data-page-link="media">Медиа</a>
+<a href="fans.html" data-page-link="fans">Болельщикам</a>
+<a href="history.html" data-page-link="history">История</a>
+<a href="contacts.html" data-page-link="contacts">Контакты</a></nav>
+    <div class="header-actions">
+      <button class="icon-btn" type="button" data-search-open>Поиск</button>
+      <button class="icon-btn" type="button" data-orders-open>ЛК</button>
+      <button class="icon-btn cart" type="button" data-cart-open>Корзина <span data-cart-count>0</span></button>
+      <button class="btn btn-yellow" type="button" data-buy-ticket data-match="dizel-sputnik">Купить билет</button>
+      <button class="menu-toggle" type="button" data-menu-toggle aria-label="Открыть меню" aria-expanded="false"><span></span><span></span></button>
+    </div>
+  </header>
+  <main>
+    <section class="page-hero"><div class="container"><p class="eyebrow reveal">Матчи и результаты</p><h1 class="reveal">Календарь сезона</h1><p class="lead reveal">Домашние игры, выездные матчи, результаты и турнирная таблица.</p></div></section>
+    <section class="section tight"><div class="container"><div class="tabs reveal" data-tabs><button class="active" data-tab="schedule">Расписание</button><button data-tab="results">Результаты</button><button data-tab="table">Таблица</button></div>
+      <div class="tab-panel active" data-panel="schedule"><div class="schedule-list">
+        <article class="schedule-card reveal"><time><b>14</b> сентябрь</time><div><h3>Дизель — Спутник</h3><p>Домашний матч · 19:00 · Ледовая арена</p></div><div class="card-actions"><button class="btn btn-yellow" type="button" data-buy-ticket data-match="dizel-sputnik">Купить билет</button><button class="btn btn-dark" type="button" data-calendar data-match="dizel-sputnik">В календарь</button></div></article>
+        <article class="schedule-card reveal"><time><b>21</b> сентябрь</time><div><h3>Олимп — Дизель</h3><p>Выездной матч · 18:30</p></div><div class="card-actions"><button class="btn btn-outline" type="button" data-protocol="semi-olimp">Анонс</button><button class="btn btn-dark" type="button" data-calendar data-match="olimp-dizel">В календарь</button></div></article>
+        <article class="schedule-card reveal"><time><b>5</b> октябрь</time><div><h3>Дизель — Север</h3><p>Домашний матч · 17:00 · Ледовая арена</p></div><div class="card-actions"><button class="btn btn-yellow" type="button" data-buy-ticket data-match="dizel-sever">Купить билет</button><button class="btn btn-dark" type="button" data-calendar data-match="dizel-sever">В календарь</button></div></article>
+        <article class="schedule-card reveal"><time><b>19</b> октябрь</time><div><h3>Дизель — Вымпел</h3><p>Домашний матч · 18:00 · Ледовая арена</p></div><div class="card-actions"><button class="btn btn-yellow" type="button" data-buy-ticket data-match="dizel-vympel">Купить билет</button><button class="btn btn-dark" type="button" data-calendar data-match="dizel-vympel">В календарь</button></div></article>
+      </div></div>
+      <div class="tab-panel" data-panel="results"><div class="grid three"><article class="card"><span class="card-label">Финал</span><div class="score-line"><span>Дизель</span><b>4</b><span>Север</span><b>1</b></div><p>Броски: 34–21 · Штраф: 8–10</p><button class="btn btn-outline" type="button" data-protocol="final-north">Протокол</button></article><article class="card"><span class="card-label">Полуфинал</span><div class="score-line"><span>Дизель</span><b>3</b><span>Олимп</span><b>2</b></div><p>Победная шайба в овертайме.</p><button class="btn btn-outline" type="button" data-protocol="semi-olimp">Протокол</button></article><article class="card"><span class="card-label">Регулярный сезон</span><div class="score-line"><span>Вымпел</span><b>2</b><span>Дизель</span><b>5</b></div><p>Голевая серия первой тройки нападения.</p><button class="btn btn-outline" type="button" data-protocol="vympel-dizel">Протокол</button></article></div></div>
+      <div class="tab-panel" data-panel="table" id="table"><div class="table-wrap"><table><thead><tr><th>Место</th><th>Команда</th><th>И</th><th>В</th><th>П</th><th>О</th></tr></thead><tbody><tr><td>1</td><td>Дизель</td><td>12</td><td>11</td><td>1</td><td>24</td></tr><tr><td>2</td><td>Спутник</td><td>12</td><td>9</td><td>3</td><td>19</td></tr><tr><td>3</td><td>Олимп</td><td>12</td><td>8</td><td>4</td><td>17</td></tr><tr><td>4</td><td>Север</td><td>12</td><td>6</td><td>6</td><td>13</td></tr><tr><td>5</td><td>Вымпел</td><td>12</td><td>4</td><td>8</td><td>9</td></tr></tbody></table></div></div>
+    </div></section>
+
+  </main>
+  <footer class="site-footer" id="contacts-footer">
+    <div class="container footer-grid">
+      <div>
+        <a class="brand" href="index.html"><img src="logo.svg" alt=""><span><strong>ХК «Дизель»</strong><small>Вологда</small></span></a>
+        <p>Хоккейный клуб Вологды: домашние матчи, билеты, состав, новости, история и события для болельщиков.</p>
+        <div class="socials"><a href="https://vk.com/" target="_blank" rel="noopener">VK</a><a href="https://t.me/" target="_blank" rel="noopener">Telegram</a><a href="https://ok.ru/" target="_blank" rel="noopener">OK</a></div>
+      </div>
+      <div><h3>Разделы</h3>
+<a href="matches.html">Матчи и результаты</a>
+<a href="tickets.html">Билеты</a>
+<a href="team.html">Команда</a>
+<a href="news.html">Новости</a>
+</div>
+<div><h3>Клуб</h3>
+<a href="history.html">История клуба</a>
+<a href="fans.html">Болельщикам</a>
+<a href="media.html">Медиацентр</a>
+<a href="contacts.html">Контакты</a>
+</div>
+      <div><h3>Контакты</h3><a href="tel:+78172000000">+7 (8172) 00-00-00</a><a href="mailto:info@hcdizel35.ru">info@hcdizel35.ru</a><p>Вологда, ледовая арена</p><a class="text-link" href="contacts.html">Написать клубу</a></div>
+    </div>
+    <div class="container footer-bottom"><span>© 2026 ХК «Дизель»</span><span>Политика конфиденциальности · Согласие на обработку персональных данных</span></div>
+  </footer>
+
+  <dialog class="modal" data-ticket-modal>
+    <form class="modal-card" method="dialog" data-ticket-form novalidate>
+      <button class="modal-close" type="button" data-modal-close aria-label="Закрыть">×</button>
+      <p class="eyebrow">Оформление билетов</p>
+      <h2>Выберите матч и сектор</h2>
+      <div class="form-row">
+        <label>Матч<select name="match" data-ticket-match required></select></label>
+        <label>Количество<input type="number" name="qty" value="1" min="1" max="8" data-ticket-qty required></label>
+      </div>
+      <div class="sector-picker" data-sector-picker aria-label="Выбор сектора"></div>
+      <div class="form-row">
+        <label>Имя<input name="name" type="text" placeholder="Ваше имя" autocomplete="name" required></label>
+        <label>Телефон<input name="phone" type="tel" placeholder="+7 (___) ___-__-__" autocomplete="tel" required></label>
+      </div>
+      <label>Email для электронного билета<input name="email" type="email" placeholder="mail@example.ru" autocomplete="email" required></label>
+      <label class="checkline"><input type="checkbox" name="agree" required><span>Согласен на обработку персональных данных и получение электронного билета</span></label>
+      <div class="order-summary" data-ticket-summary></div>
+      <button class="btn btn-yellow wide" type="submit">Оформить заказ</button>
+      <div class="form-status" data-ticket-status role="status"></div>
+    </form>
+  </dialog>
+  <dialog class="modal" data-search-modal>
+    <div class="modal-card">
+      <button class="modal-close" type="button" data-modal-close aria-label="Закрыть">×</button>
+      <p class="eyebrow">Поиск по сайту</p>
+      <h2>Найдите матч, игрока или новость</h2>
+      <input class="search-input" type="search" placeholder="Например: билеты, Дизель — Спутник" data-search-input autofocus>
+      <div class="search-results" data-search-results></div>
+    </div>
+  </dialog>
+  <dialog class="modal" data-info-modal>
+    <div class="modal-card">
+      <button class="modal-close" type="button" data-modal-close aria-label="Закрыть">×</button>
+      <div data-info-content></div>
+    </div>
+  </dialog>
+  <aside class="drawer" data-cart-drawer aria-hidden="true">
+    <div class="drawer-head"><h2>Корзина</h2><button type="button" data-drawer-close aria-label="Закрыть">×</button></div>
+    <div class="drawer-body" data-cart-items></div>
+    <form class="drawer-checkout" data-shop-order-form novalidate>
+      <label>Имя<input name="name" required placeholder="Ваше имя"></label>
+      <label>Телефон<input name="phone" required placeholder="+7 (___) ___-__-__"></label>
+      <label class="checkline"><input type="checkbox" required><span>Согласен на обработку персональных данных</span></label>
+      <button class="btn btn-yellow wide" type="submit">Оформить заказ</button>
+      <div class="form-status" data-shop-status></div>
+    </form>
+  </aside>
+  <aside class="drawer" data-orders-drawer aria-hidden="true">
+    <div class="drawer-head"><h2>Личный кабинет</h2><button type="button" data-drawer-close aria-label="Закрыть">×</button></div>
+    <div class="drawer-body" data-orders-list></div>
+  </aside>
+
+  <script src="app.js"></script>
+</body>
+</html>
